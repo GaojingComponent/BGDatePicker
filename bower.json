@@ -1,0 +1,9 @@
+{
+    "name": "DatePicker Component",
+    "version": "0.0.1",
+    "author": "linbin02@baidu.com",
+    "main": "src/date-picker.js",
+    "dependencies": {
+        "angular": "~1.x"
+    }
+}
