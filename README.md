@@ -2,7 +2,7 @@
 ## Date picker component implemented by AngularJS
 + Usage
 ```html
-<input type="text" date-picker>
+<input type="text" bg-date-picker>
 ```
 + Demo
 

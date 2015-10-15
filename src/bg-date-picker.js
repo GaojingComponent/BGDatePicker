@@ -5,8 +5,8 @@
 
 
 (function () {
-    var datePicker = angular.module('gDatePicker', []);
-    datePicker.directive('gDatePicker', ['$compile', function ($compile) {
+    var datePicker = angular.module('bGDatePicker', []);
+    datePicker.directive('bgDatePicker', ['$compile', function ($compile) {
         // Runs during compile
         return {
             restrict: 'A',
@@ -27,10 +27,10 @@
                         var scrollTop = document.body.scrollTop;
                         var height = target.offsetHeight;
                         top += height + scrollTop;
-                        var datePickerCalendar = $compile('<g-date-picker-calendar on-date-click="'
+                        var datePickerCalendar = $compile('<bg-date-picker-calendar on-date-click="'
                             + iAttrs.onDateClick + '" bind-value="' + iAttrs.ngModel + '" input-id="'
                             + id + '" id="' + randomId + '" top="' + top + '" left="' + left
-                            + '"></g-date-picker-calendar>')($scope);
+                            + '"></bg-date-picker-calendar>')($scope);
                         angular.element(document.body).append(angular.element(datePickerCalendar));
                     }
                 });
@@ -45,7 +45,7 @@
         };
     }]);
 
-    datePicker.directive('gDatePickerCalendar', ['$filter', '$parse', function ($filter, $parse) {
+    datePicker.directive('bgDatePickerCalendar', ['$filter', '$parse', function ($filter, $parse) {
 
         /**
          * if the given year is leap year
@@ -231,7 +231,7 @@
             //     onCalendarClick: '='
             // }, // {} = isolate, true = child, false/undefined = no change
             restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
-            templateUrl: '../g-date-picker.tpl',
+            templateUrl: '../bg-date-picker.tpl',
             replace: true,
             link: function ($scope, iElm, iAttrs, controller) {
                 var dateFormat = 'yyyy-MM-dd HH:mm';
