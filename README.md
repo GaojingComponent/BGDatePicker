@@ -8,3 +8,10 @@
 
   ![DatePicker](https://github.com/GaojingComponent/DatePicker/blob/master/img/date-picker.png)
 + Installation
+```bash
+bower install bg-datepicker
+```
+And add the js file into your html
+```html
+<script src="bower-components/bg-datepicker/src/bg-datepicker.js"></script>
+```
