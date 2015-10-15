@@ -1,8 +1,12 @@
 {
-    "name": "DatePicker Component",
+    "name": "g-datepicker",
     "version": "0.0.1",
     "author": "linbin02@baidu.com",
-    "main": "src/date-picker.js",
+    "main": "src/g-date-picker.js",
+    "ignore": [
+        "README.md",
+        "bower.json"
+    ],
     "dependencies": {
         "angular": "~1.x"
     }
