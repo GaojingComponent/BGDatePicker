@@ -39,20 +39,20 @@
             cursor: pointer;
         }
         #last-year-icon {
-            background: url(/images/double-left-direct-icon.png) no-repeat center center;
+            background: url(../img/double-left-direct-icon.png) no-repeat center center;
             background-size: 6px 6px;
         }
         #last-month-icon {
-            background: url(/images/left-direct-icon.png) no-repeat center center;
+            background: url(../img/left-direct-icon.png) no-repeat center center;
             background-size: 6px 6px;
             margin-left: 5px;
         }
         #next-year-icon {
-            background: url(/images/double-right-direct-icon.png) no-repeat center center;
+            background: url(../img/double-right-direct-icon.png) no-repeat center center;
             background-size: 6px 6px;
         }
         #next-month-icon {
-            background: url(/images/right-direct-icon.png) no-repeat center center;
+            background: url(../img/right-direct-icon.png) no-repeat center center;
             background-size: 6px 6px;
             margin-right: 5px;
         }
@@ -118,12 +118,12 @@
         }
         #next-hour-icon,
         #next-minute-icon {
-            background: url(/images/right-direct-icon.png) no-repeat center center;
+            background: url(../img/right-direct-icon.png) no-repeat center center;
             background-size: 6px 6px;
         }
         #last-hour-icon,
         #last-minute-icon {
-            background: url(/images/left-direct-icon.png) no-repeat center center;
+            background: url(../img/left-direct-icon.png) no-repeat center center;
             background-size: 6px 6px;
         }
         #minute-selector {
