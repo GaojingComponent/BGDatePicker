@@ -5,12 +5,15 @@
 
 
 (function () {
-    var datePicker = angular.module('bGDatePicker', []);
+    var datePicker = angular.module('bg.datePicker', []);
+    var $ = angular.element;
     datePicker.directive('bgDatePicker', ['$compile', function ($compile) {
         // Runs during compile
         return {
             restrict: 'A',
-            link: function ($scope, iElm, iAttrs, controller) {
+            require: ['^ngModel'],
+            link: function ($scope, iElm, iAttrs, ctrl) {
+                var ngModel = ctrl[0];
                 var randomId = (new Date()).getTime();
                 var id = iElm.attr('id');
                 if (!id) {
@@ -19,7 +22,8 @@
                 }
                 iElm.attr('data-bind-calendar', randomId);
                 iElm.on('click', function (e) {
-                    if (document.getElementById(randomId) == null) {
+                    var calendar = document.getElementById(randomId);
+                    if (calendar == null) {
                         var target = e.target;
                         var offset = target.getBoundingClientRect();
                         var left = offset.left;
@@ -28,17 +32,19 @@
                         var height = target.offsetHeight;
                         top += height + scrollTop;
                         var datePickerCalendar = $compile('<bg-date-picker-calendar on-date-click="'
-                            + iAttrs.onDateClick + '" bind-value="' + iAttrs.ngModel + '" input-id="'
-                            + id + '" id="' + randomId + '" top="' + top + '" left="' + left
-                            + '"></bg-date-picker-calendar>')($scope);
-                        angular.element(document.body).append(angular.element(datePickerCalendar));
+                            + iAttrs.onDateClick + '" ng-model="' + iAttrs.ngModel + '" input-id="'
+                            + id + '" id="' + randomId + '" style="left:' + left+ 'px;top:'
+                            + top + 'px;" init-value="' + ngModel.$modelValue + '"></bg-date-picker-calendar>')($scope);
+                        $(document.body).append($(datePickerCalendar));
+                    } else {
+                        $(calendar).css('display', 'block');
                     }
                 });
 
-                angular.element(document.body).on('click', function (e) {
+                $(document.body).on('click', function (e) {
                     var target = $(e.target);
                     if (target.attr('id') !== id) {
-                        angular.element(document.getElementById(randomId)).remove();
+                        $(document.getElementById(randomId)).css('display', 'none');
                     }
                 });
             }
@@ -225,15 +231,58 @@
             }
         };
 
+        /**
+         * validate a date object
+         * @param  {Object}  date the date object to validate
+         * @return {boolean} if the date object is a valid date
+         */
+        var isValidDate = function (date) {
+            if (Object.prototype.toString.call(date) === '[object Date]') {
+                if (isNaN(date.getTime())) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        };
+
         // Runs during compile
         return {
-            // scope: {
-            //     onCalendarClick: '='
-            // }, // {} = isolate, true = child, false/undefined = no change
-            restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
-            templateUrl: '../bg-date-picker.tpl',
+            
+            restrict: 'E',
+            require: ['^ngModel'],
+            template: '<div class="date-picker-calendar">\
+                            <div class="date-picker-calendar-header">\
+                                <div class="header-direct left-direct">\
+                                    <span class="last-year-icon"></span>\
+                                    <span class="last-month-icon"></span>\
+                                </div>\
+                                <div class="header-label"></div>\
+                                <div class="header-direct right-direct">\
+                                    <span class="next-year-icon"></span>\
+                                    <span class="next-month-icon"></span>\
+                                </div>\
+                            </div>\
+                            <table class="date-picker-calendar-table"></table>\
+                            <div class="date-time-panel">\
+                                <div class="hour-selector">\
+                                    <span class="last-hour-icon"></span>\
+                                    <span class="hour-panel"></span>\
+                                    <span class="next-hour-icon"></span>\
+                                </div>\
+                                :\
+                                <div class="minute-selector">\
+                                    <span class="last-minute-icon"></span>\
+                                    <span class="minute-panel"></span>\
+                                    <span class="next-minute-icon"></span>\
+                                </div>\
+                            </div>\
+                        </div>',
             replace: true,
-            link: function ($scope, iElm, iAttrs, controller) {
+            link: function ($scope, iElm, iAttrs, ctrl) {
+                var ngModel = ctrl[0];
                 var dateFormat = 'yyyy-MM-dd HH:mm';
                 var now = new Date();
                 var year = +iAttrs.initYear || now.getFullYear();
@@ -242,37 +291,31 @@
                 var hour = now.getHours();
                 var minute = now.getMinutes();
                 var container = iElm[0];
-                var input = angular.element(document.getElementById(iAttrs.inputId));
-                var table = angular.element(container.querySelector('table'));
+                var table = $(container.querySelector('table'));
                 renderCalendar(year, month, date, table);
 
-                var calendarHeader = angular.element(container.querySelector('#header-label'));
+                var calendarHeader = $(container.querySelector('.header-label'));
                 calendarHeader.html(month + ' / ' + year);
 
-                var hourPanel = angular.element(container.querySelector('#hour-panel'));
+                var hourPanel = $(container.querySelector('.hour-panel'));
                 hourPanel.html(hour);
 
-                var minutePanel = angular.element(container.querySelector('#minute-panel'));
+                var minutePanel = $(container.querySelector('.minute-panel'));
                 minutePanel.html(minute);
 
-                var left = iAttrs.left;
-                var top = iAttrs.top;
-                var id = iAttrs.id;
-                var calendar = angular.element(iElm.find('div')[0]);
-                iElm.attr('id', id);
-                calendar.css('top', top + 'px');
-                calendar.css('left', left + 'px');
-                calendar.css('display', 'block');
+                $(container).css('display', 'block');
 
-                var header = angular.element(container.querySelector('#date-picker-calendar-header'));
+                var header = $(container.querySelector('.date-picker-calendar-header'));
+                // change the date
                 header.on('click', function (e) {
                     var target = e.target;
-                    if (target.id.indexOf('last-year-icon') !== -1) {
+                    if (target.className.indexOf('last-year-icon') !== -1) {
                         year --;
                         renderCalendar(year, month, now.getDate(), table);
                         calendarHeader.html(month + ' / ' + year);
                         now.setFullYear(year);
-                    } else if (target.id.indexOf('last-month-icon') !== -1) {
+                        ngModel.$setViewValue($filter('date')(now, dateFormat));
+                    } else if (target.className.indexOf('last-month-icon') !== -1) {
                         var lastMonth = getLastMonth(year, month);
                         year = lastMonth.year;
                         month = lastMonth.month;
@@ -285,7 +328,8 @@
                             now.setDate(1);
                         }
                         now.setMonth(month - 1);
-                    } else if (target.id.indexOf('next-month-icon') !== -1) {
+                        ngModel.$setViewValue($filter('date')(now, dateFormat));
+                    } else if (target.className.indexOf('next-month-icon') !== -1) {
                         var nextMonth = getNextMonth(year, month);
                         year = nextMonth.year;
                         month = nextMonth.month;
@@ -295,57 +339,69 @@
                             now.setDate(1);
                         }
                         now.setMonth(month - 1);
-                    } else if (target.id.indexOf('next-year-icon') !== -1) {
+                        ngModel.$setViewValue($filter('date')(now, dateFormat));
+                    } else if (target.className.indexOf('next-year-icon') !== -1) {
                         year ++;
                         renderCalendar(year, month, now.getDate(), table);
                         calendarHeader.html(month + ' / ' + year);
                         now.setFullYear(year);
+                        ngModel.$setViewValue($filter('date')(now, dateFormat));
                     }
                     e.stopPropagation();
                 });
-                var dateSelector = angular.element(container.querySelector('#date-time-panel'));
+                var dateSelector = $(container.querySelector('.date-time-panel'));
+                // change the date time
                 dateSelector.on('click', function (e) {
                     var target = e.target;
-                    var id = target.id;
-                    if (id.indexOf('last-hour-icon') !== -1) {
+                    var className = target.className;
+                    if (className.indexOf('last-hour-icon') !== -1) {
                         hour = (-- hour) % 24;
                         hourPanel.html(hour);
                         now.setHours(hour);
-                        $parse(iAttrs.bindValue).assign($scope, $filter('date')(now, dateFormat));
-                    } else if (id.indexOf('next-hour-icon') !== -1) {
+                        ngModel.$setViewValue($filter('date')(now, dateFormat));
+                    } else if (className.indexOf('next-hour-icon') !== -1) {
                         hour = (++ hour) % 24;
                         hourPanel.html(hour);
                         now.setHours(hour);
-                        $parse(iAttrs.bindValue).assign($scope, $filter('date')(now, dateFormat));
-                    } else if (id.indexOf('last-minute-icon') !== -1) {
+                        ngModel.$setViewValue($filter('date')(now, dateFormat));
+                    } else if (className.indexOf('last-minute-icon') !== -1) {
                         minute = (-- minute) % 60;
                         minutePanel.html(minute);
                         now.setMinutes(minute);
-                        $parse(iAttrs.bindValue).assign($scope, $filter('date')(now, dateFormat));
-                    } else if (id.indexOf('next-minute-icon') !== -1) {
+                        ngModel.$setViewValue($filter('date')(now, dateFormat));
+                    } else if (className.indexOf('next-minute-icon') !== -1) {
                         minute = (++ minute) % 60;
                         minutePanel.html(minute);
                         now.setMinutes(minute);
-                        $parse(iAttrs.bindValue).assign($scope, $filter('date')(now, dateFormat));
+                        ngModel.$setViewValue($filter('date')(now, dateFormat));
                     }
 
                     e.stopPropagation();
                 });
 
-                angular.element(container).on('click', function (e) {
+                $(container).on('click', function (e) {
                     var target = e.target;
                     var tagName = target.tagName;
                     if (tagName.toLowerCase() === 'span') {
-                        var date = +angular.element(target).html();
+                        var date = +$(target).html();
                         now.setDate(date);
                         now.setHours(0);
                         now.setMinutes(0);
-                        $parse(iAttrs.bindValue).assign($scope, $filter('date')(now, dateFormat));
+                        ngModel.$setViewValue($filter('date')(now, dateFormat));
                         if (iAttrs.onDateClick !== 'undefined') {
                             $scope[iAttrs.onDateClick](now);
                         }
                     }
                 });
+
+                console.log(iAttrs.initValue);
+
+                var initDate = new Date(iAttrs.initValue);
+                if (isValidDate(initDate)) {
+                    //todo set the calendar to the init date
+                } else {
+                    ngModel.$setViewValue($filter('date')(new Date(), dateFormat));
+                }
             }
         };
     }]);

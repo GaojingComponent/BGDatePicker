@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>BGDatePicker</title>
+        <link rel="stylesheet" href="../src/style/bg-date-picker.css">
+        <style>
+            input[type=text] {
+                height: 26px;
+                width: 120px;
+                border: 1px solid #eee;
+                border-radius: 3px;
+                outline: none;
+            }
+        </style>
+    </head>
+    <body ng-app="DatePickerExample" ng-controller="Ctrl">
+        <input type="text" bg-date-picker ng-model="now">
+        <script src="//cdn.bootcss.com/angular.js/1.4.7/angular.min.js"></script>
+        <script src="../src/bg-date-picker.js"></script>
+        <script>
+            (function () {
+                var example = angular.module('DatePickerExample', ['bg.datePicker']);
+                var ctrl = example.controller('Ctrl', ['$scope', function ($scope) {
+                        $scope.now = '2015-11-14 17:19sdadsd';
+                }]);
+            }());
+        </script>
+    </body>
+</html>
