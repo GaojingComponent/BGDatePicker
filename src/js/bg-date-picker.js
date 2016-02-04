@@ -4,7 +4,8 @@
  */
 
 
-(function () {
+define(['angular'], function (angular) {
+
     var datePicker = angular.module('bg.datePicker', []);
     var $ = angular.element;
     datePicker.directive('bgDatePicker', ['$compile', function ($compile) {
@@ -250,7 +251,7 @@
 
         // Runs during compile
         return {
-            
+
             restrict: 'E',
             require: ['^ngModel'],
             template: '<div class="date-picker-calendar">\
@@ -405,4 +406,4 @@
             }
         };
     }]);
-}());
+});
