@@ -1,20 +1,20 @@
 {
-  "name": "bg-data-picker",
+  "name": "bg-date-picker",
   "version": "1.0.0",
-  "description": "Data picker implements by AngularJS",
+  "description": "Date picker implements by AngularJS",
   "main": "index.js",
   "directories": {
     "example": "example"
   },
   "scripts": {
-    "test": "npm run karma start karma.conf.js"
+    "ci": "echo \"ci\""
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/GaojingComponent/DatePicker.git"
   },
   "keywords": [
-    "data",
+    "date",
     "picker",
     "angular"
   ],
