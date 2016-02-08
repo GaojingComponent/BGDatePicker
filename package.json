@@ -7,7 +7,8 @@
     "example": "example"
   },
   "scripts": {
-    "ci": "echo \"ci\""
+    "test": "karma start karma.conf.js",
+    "ci": "npm run test && codecov test/coverage/cobertura-coverage.xml"
   },
   "repository": {
     "type": "git",
