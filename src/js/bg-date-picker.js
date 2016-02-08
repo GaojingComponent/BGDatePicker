@@ -1,8 +1,7 @@
 /**
- * @file data picker component
- * @author linbin02@baidu.com
+ * @file date picker component
+ * @author lakb248@gmail.com
  */
-
 
 define(['angular'], function (angular) {
 
