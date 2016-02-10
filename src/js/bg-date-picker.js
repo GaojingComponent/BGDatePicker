@@ -120,32 +120,32 @@ define(['angular'], function (angular) {
 
         // Runs during compile
         return {
-
+            scope: {},
             restrict: 'E',
             require: ['^ngModel'],
             template: '<div class="date-picker-calendar">\
-                            <div class="date-picker-calendar-header">\
+                            <div class="date-picker-calendar-header" ng-click="onHeaderClick($event)">\
                                 <div class="header-direct left-direct">\
                                     <span class="last-year-icon"></span>\
                                     <span class="last-month-icon"></span>\
                                 </div>\
-                                <div class="header-label"></div>\
+                                <div class="header-label" ng-bind-template={{header}}></div>\
                                 <div class="header-direct right-direct">\
                                     <span class="next-year-icon"></span>\
                                     <span class="next-month-icon"></span>\
                                 </div>\
                             </div>\
-                            <table class="date-picker-calendar-table"></table>\
-                            <div class="date-time-panel">\
+                            <table class="date-picker-calendar-table" ng-click="onCalendarClick($event)"></table>\
+                            <div class="date-time-panel" ng-click="onDateTimeClick($event)">\
                                 <div class="hour-selector">\
                                     <span class="last-hour-icon"></span>\
-                                    <input class="hour-panel"/>\
+                                    <input class="hour-panel" ng-model="hour"/>\
                                     <span class="next-hour-icon"></span>\
                                 </div>\
                                 :\
                                 <div class="minute-selector">\
                                     <span class="last-minute-icon"></span>\
-                                    <input class="minute-panel"/>\
+                                    <input class="minute-panel" ng-model="minute"/>\
                                     <span class="next-minute-icon"></span>\
                                 </div>\
                             </div>\
@@ -163,26 +163,19 @@ define(['angular'], function (angular) {
                 var container = iElm[0];
                 var table = $(container.querySelector('table'));
                 renderCalendar(year, month, date, table);
-
+                $scope.hour = now.getHours();
+                $scope.minute = now.getMinutes();
                 var calendarHeader = $(container.querySelector('.header-label'));
-                calendarHeader.html(month + ' / ' + year);
-
-                var hourPanel = $(container.querySelector('.hour-panel'));
-                hourPanel.val(hour);
-
-                var minutePanel = $(container.querySelector('.minute-panel'));
-                minutePanel.val(minute);
+                $scope.header = month + ' / ' + year;
 
                 $(container).css('display', 'block');
 
-                var header = $(container.querySelector('.date-picker-calendar-header'));
-                // change the date
-                header.on('click', function (e) {
+                $scope.onHeaderClick = function (e) {
                     var target = e.target;
                     if (target.className.indexOf('last-year-icon') !== -1) {
                         year --;
                         renderCalendar(year, month, now.getDate(), table);
-                        calendarHeader.html(month + ' / ' + year);
+                        $scope.header = month + ' / ' + year;
                         now.setFullYear(year);
                         // ngModel.$setViewValue($filter('date')(now, dateFormat));
                     } else if (target.className.indexOf('last-month-icon') !== -1) {
@@ -190,7 +183,7 @@ define(['angular'], function (angular) {
                         year = lastMonth.year;
                         month = lastMonth.month;
                         renderCalendar(lastMonth.year, lastMonth.month, now.getDate(), table);
-                        calendarHeader.html(month + ' / ' + year);
+                        $scope.header = month + ' / ' + year;
                         // js中，如果当前日期大于28后，设置为2月份时
                         // js会认为数据日期溢出，自动会把月份+1,
                         // 因此需要先把日期设置为1号，这样就不会溢出
@@ -203,7 +196,7 @@ define(['angular'], function (angular) {
                         year = nextMonth.year;
                         month = nextMonth.month;
                         renderCalendar(year, month, now.getDate(), table);
-                        calendarHeader.html(month + ' / ' + year);
+                        $scope.header = month + ' / ' + year;
                         if (month === 2) {
                             now.setDate(1);
                         }
@@ -211,42 +204,41 @@ define(['angular'], function (angular) {
                     } else if (target.className.indexOf('next-year-icon') !== -1) {
                         year ++;
                         renderCalendar(year, month, now.getDate(), table);
-                        calendarHeader.html(month + ' / ' + year);
+                        $scope.header = month + ' / ' + year;
                         now.setFullYear(year);
                     }
                     e.stopPropagation();
-                });
-                var dateSelector = $(container.querySelector('.date-time-panel'));
-                // change the date time
-                dateSelector.on('click', function (e) {
+                };
+
+                $scope.onDateTimeClick = function (e) {
                     var target = e.target;
                     var className = target.className;
                     if (className.indexOf('last-hour-icon') !== -1) {
                         hour = (-- hour) % 24;
-                        hourPanel.html(hour);
+                        $scope.hour = hour;
                         now.setHours(hour);
                         ngModel.$setViewValue($filter('date')(now, dateFormat));
                     } else if (className.indexOf('next-hour-icon') !== -1) {
                         hour = (++ hour) % 24;
-                        hourPanel.html(hour);
+                        $scope.hour = hour;
                         now.setHours(hour);
                         ngModel.$setViewValue($filter('date')(now, dateFormat));
                     } else if (className.indexOf('last-minute-icon') !== -1) {
                         minute = (-- minute) % 60;
-                        minutePanel.html(minute);
+                        $scope.minute = minute;
                         now.setMinutes(minute);
                         ngModel.$setViewValue($filter('date')(now, dateFormat));
                     } else if (className.indexOf('next-minute-icon') !== -1) {
                         minute = (++ minute) % 60;
-                        minutePanel.html(minute);
+                        $scope.minute = minute;
                         now.setMinutes(minute);
                         ngModel.$setViewValue($filter('date')(now, dateFormat));
                     }
 
                     e.stopPropagation();
-                });
-
-                $(container).on('click', function (e) {
+                };
+                
+                $scope.onCalendarClick = function (e) {
                     var target = e.target;
                     var tagName = target.tagName;
                     if (tagName.toLowerCase() === 'span') {
@@ -256,10 +248,10 @@ define(['angular'], function (angular) {
                         now.setMinutes(0);
                         ngModel.$setViewValue($filter('date')(now, dateFormat));
                         if (iAttrs.onDateClick !== 'undefined') {
-                            $scope[iAttrs.onDateClick](now);
+                            $scope.$parent[iAttrs.onDateClick](now);
                         }
                     }
-                });
+                };
 
                 var initDate = new Date(iAttrs.initValue);
                 if (dateService.isValidDate(initDate)) {
