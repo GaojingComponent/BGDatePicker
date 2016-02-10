@@ -51,81 +51,7 @@ define(['angular'], function (angular) {
         };
     }]);
 
-    datePicker.directive('bgDatePickerCalendar', ['$filter', '$parse', function ($filter, $parse) {
-
-        /**
-         * if the given year is leap year
-         * @param  {Integer} year the year
-         * @return {boolean} result the result
-         */
-        var isLeap = function (year) {
-            if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
-                return true;
-            } else {
-                return false;
-            }
-        };
-
-        /**
-         * get the max date of month
-         * @param  {Integer} year  the year
-         * @param  {Integer} month the month
-         * @return {Integer} max the max day of month
-         */
-        var getMaxDayOfMonth = function (year, month) {
-            switch (month) {
-                case 1:
-                case 3:
-                case 5:
-                case 7:
-                case 8:
-                case 10:
-                case 12:
-                    return 31;
-                case 4:
-                case 6:
-                case 9:
-                case 11:
-                    return 30;
-                case 2:
-                    if (isLeap(year)) {
-                        return 29;
-                    } else {
-                        return 28;
-                    }
-            }
-        };
-
-        /**
-         * get the first day of month
-         * @param  {Integer} year  the year
-         * @param  {Integer} month the month
-         * @return {Integer} day the first day
-         */
-        var getFirstDayOfMonth = function (year, month) {
-            var firstDay = 0;
-            var century = Math.floor(year / 100);
-            var y = year % 100;
-            if (month === 1 || month === 2) {
-                century = Math.floor((year - 1) / 100);
-                y = (year - 1) % 100;
-                if (month === 1) {
-                    month = 13;
-                } else {
-                    month = 14;
-                }
-            }
-            firstDay = Math.floor(century / 4) - 2 * century + y
-                + Math.floor(y / 4) + Math.floor(13 * (month + 1) / 5);
-            firstDay = firstDay % 7;
-
-            while (firstDay < 0) {
-                firstDay = firstDay + 70;
-            }
-
-            return firstDay % 7;
-        };
-
+    datePicker.directive('bgDatePickerCalendar', ['$filter', '$parse', 'DateService', function ($filter, $parse, dateService) {
         /**
          * render calendar
          * @param  {Integer} year  year of calendar
@@ -137,8 +63,8 @@ define(['angular'], function (angular) {
             var now = new Date();
             var curYear = now.getFullYear();
             var curMonth = now.getMonth() + 1;
-            var firstDayOfMonth = getFirstDayOfMonth(year, month);
-            var maxDayOfThisMonth = getMaxDayOfMonth(year, month);
+            var firstDayOfMonth = dateService.getFirstDayOfMonth(year, month);
+            var maxDayOfThisMonth = dateService.getMaxDayOfMonth(year, month);
             // render table head
             var html = [];
             html.push('<tr>');
@@ -191,62 +117,6 @@ define(['angular'], function (angular) {
             table.html(html.join(''));
         };
 
-        /**
-         * get year and month of last month
-         * @param  {Integer} year the year
-         * @param  {Integer} month the month
-         * @return {Object} result the result
-         */
-        var getLastMonth = function (year, month) {
-            if (month === 1) {
-                return {
-                    year: year - 1,
-                    month: 12
-                };
-            } else {
-                return {
-                    year: year,
-                    month: month - 1
-                };
-            }
-        };
-
-        /**
-         * get year and month of this month
-         * @param  {Integer} year the year
-         * @param  {Integer} month the month
-         * @return {Object} result the result
-         */
-        var getNextMonth = function (year, month) {
-            if (month === 12) {
-                return {
-                    year: year + 1,
-                    month: 1
-                };
-            } else {
-                return {
-                    year: year,
-                    month: month + 1
-                };
-            }
-        };
-
-        /**
-         * validate a date object
-         * @param  {Object}  date the date object to validate
-         * @return {boolean} if the date object is a valid date
-         */
-        var isValidDate = function (date) {
-            if (Object.prototype.toString.call(date) === '[object Date]') {
-                if (isNaN(date.getTime())) {
-                    return false;
-                } else {
-                    return true;
-                }
-            } else {
-                return false;
-            }
-        };
 
         // Runs during compile
         return {
@@ -269,13 +139,13 @@ define(['angular'], function (angular) {
                             <div class="date-time-panel">\
                                 <div class="hour-selector">\
                                     <span class="last-hour-icon"></span>\
-                                    <span class="hour-panel"></span>\
+                                    <input class="hour-panel"/>\
                                     <span class="next-hour-icon"></span>\
                                 </div>\
                                 :\
                                 <div class="minute-selector">\
                                     <span class="last-minute-icon"></span>\
-                                    <span class="minute-panel"></span>\
+                                    <input class="minute-panel"/>\
                                     <span class="next-minute-icon"></span>\
                                 </div>\
                             </div>\
@@ -298,10 +168,10 @@ define(['angular'], function (angular) {
                 calendarHeader.html(month + ' / ' + year);
 
                 var hourPanel = $(container.querySelector('.hour-panel'));
-                hourPanel.html(hour);
+                hourPanel.val(hour);
 
                 var minutePanel = $(container.querySelector('.minute-panel'));
-                minutePanel.html(minute);
+                minutePanel.val(minute);
 
                 $(container).css('display', 'block');
 
@@ -314,9 +184,9 @@ define(['angular'], function (angular) {
                         renderCalendar(year, month, now.getDate(), table);
                         calendarHeader.html(month + ' / ' + year);
                         now.setFullYear(year);
-                        ngModel.$setViewValue($filter('date')(now, dateFormat));
+                        // ngModel.$setViewValue($filter('date')(now, dateFormat));
                     } else if (target.className.indexOf('last-month-icon') !== -1) {
-                        var lastMonth = getLastMonth(year, month);
+                        var lastMonth = dateService.getLastMonth(year, month);
                         year = lastMonth.year;
                         month = lastMonth.month;
                         renderCalendar(lastMonth.year, lastMonth.month, now.getDate(), table);
@@ -328,9 +198,8 @@ define(['angular'], function (angular) {
                             now.setDate(1);
                         }
                         now.setMonth(month - 1);
-                        ngModel.$setViewValue($filter('date')(now, dateFormat));
                     } else if (target.className.indexOf('next-month-icon') !== -1) {
-                        var nextMonth = getNextMonth(year, month);
+                        var nextMonth = dateService.getNextMonth(year, month);
                         year = nextMonth.year;
                         month = nextMonth.month;
                         renderCalendar(year, month, now.getDate(), table);
@@ -339,13 +208,11 @@ define(['angular'], function (angular) {
                             now.setDate(1);
                         }
                         now.setMonth(month - 1);
-                        ngModel.$setViewValue($filter('date')(now, dateFormat));
                     } else if (target.className.indexOf('next-year-icon') !== -1) {
                         year ++;
                         renderCalendar(year, month, now.getDate(), table);
                         calendarHeader.html(month + ' / ' + year);
                         now.setFullYear(year);
-                        ngModel.$setViewValue($filter('date')(now, dateFormat));
                     }
                     e.stopPropagation();
                 });
@@ -394,15 +261,148 @@ define(['angular'], function (angular) {
                     }
                 });
 
-                console.log(iAttrs.initValue);
-
                 var initDate = new Date(iAttrs.initValue);
-                if (isValidDate(initDate)) {
+                if (dateService.isValidDate(initDate)) {
                     //todo set the calendar to the init date
                 } else {
                     ngModel.$setViewValue($filter('date')(new Date(), dateFormat));
                 }
             }
+        };
+    }]);
+
+    datePicker.service('DateService', [function () {
+        return {
+            /**
+             * if the given year is leap year
+             * @param  {Integer} year the year
+             * @return {boolean} result the result
+             */
+            isLeap: function (year) {
+                if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+
+            /**
+             * get the max date of month
+             * @param  {Integer} year  the year
+             * @param  {Integer} month the month
+             * @return {Integer} max the max day of month
+             */
+            getMaxDayOfMonth: function (year, month) {
+                switch (month) {
+                    case 1:
+                    case 3:
+                    case 5:
+                    case 7:
+                    case 8:
+                    case 10:
+                    case 12:
+                        return 31;
+                    case 4:
+                    case 6:
+                    case 9:
+                    case 11:
+                        return 30;
+                    case 2:
+                        if (this.isLeap(year)) {
+                            return 29;
+                        } else {
+                            return 28;
+                        }
+                }
+            },
+
+            /**
+             * get the first day of month
+             * @param  {Integer} year  the year
+             * @param  {Integer} month the month
+             * @return {Integer} day the first day
+             */
+            getFirstDayOfMonth: function (year, month) {
+                var firstDay = 0;
+                var century = Math.floor(year / 100);
+                var y = year % 100;
+                if (month === 1 || month === 2) {
+                    century = Math.floor((year - 1) / 100);
+                    y = (year - 1) % 100;
+                    if (month === 1) {
+                        month = 13;
+                    } else {
+                        month = 14;
+                    }
+                }
+                firstDay = Math.floor(century / 4) - 2 * century + y
+                    + Math.floor(y / 4) + Math.floor(13 * (month + 1) / 5);
+                firstDay = firstDay % 7;
+
+                while (firstDay < 0) {
+                    firstDay = firstDay + 70;
+                }
+
+                return firstDay % 7;
+            },
+
+            /**
+             * get year and month of last month
+             * @param  {Integer} year the year
+             * @param  {Integer} month the month
+             * @return {Object} result the result
+             */
+            getLastMonth: function (year, month) {
+                if (month === 1) {
+                    return {
+                        year: year - 1,
+                        month: 12
+                    };
+                } else {
+                    return {
+                        year: year,
+                        month: month - 1
+                    };
+                }
+            },
+
+            /**
+             * get year and month of this month
+             * @param  {Integer} year the year
+             * @param  {Integer} month the month
+             * @return {Object} result the result
+             */
+            getNextMonth: function (year, month) {
+                if (month === 12) {
+                    return {
+                        year: year + 1,
+                        month: 1
+                    };
+                } else {
+                    return {
+                        year: year,
+                        month: month + 1
+                    };
+                }
+            },
+
+            /**
+             * validate a date object
+             * @param  {Object}  date the date object to validate
+             * @return {boolean} if the date object is a valid date
+             */
+            isValidDate: function (date) {
+                if (Object.prototype.toString.call(date) === '[object Date]') {
+                    if (isNaN(date.getTime())) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                } else {
+                    return false;
+                }
+            }
+
         };
     }]);
 });
