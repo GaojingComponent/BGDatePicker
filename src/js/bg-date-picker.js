@@ -117,7 +117,6 @@ define(['angular'], function (angular) {
             table.html(html.join(''));
         };
 
-
         // Runs during compile
         return {
             scope: {},
@@ -139,13 +138,13 @@ define(['angular'], function (angular) {
                             <div class="date-time-panel" ng-click="onDateTimeClick($event)">\
                                 <div class="hour-selector">\
                                     <span class="last-hour-icon"></span>\
-                                    <input class="hour-panel" ng-model="hour"/>\
+                                    <input class="hour-panel" ng-model="hour" ng-blur="onHourBlur()"/>\
                                     <span class="next-hour-icon"></span>\
                                 </div>\
                                 :\
                                 <div class="minute-selector">\
                                     <span class="last-minute-icon"></span>\
-                                    <input class="minute-panel" ng-model="minute"/>\
+                                    <input class="minute-panel" ng-model="minute" ng-blur="onMinuteBlur()"/>\
                                     <span class="next-minute-icon"></span>\
                                 </div>\
                             </div>\
@@ -165,7 +164,6 @@ define(['angular'], function (angular) {
                 renderCalendar(year, month, date, table);
                 $scope.hour = now.getHours();
                 $scope.minute = now.getMinutes();
-                var calendarHeader = $(container.querySelector('.header-label'));
                 $scope.header = month + ' / ' + year;
 
                 $(container).css('display', 'block');
@@ -184,10 +182,7 @@ define(['angular'], function (angular) {
                         month = lastMonth.month;
                         renderCalendar(lastMonth.year, lastMonth.month, now.getDate(), table);
                         $scope.header = month + ' / ' + year;
-                        // js中，如果当前日期大于28后，设置为2月份时
-                        // js会认为数据日期溢出，自动会把月份+1,
-                        // 因此需要先把日期设置为1号，这样就不会溢出
-                        if (month === 2) {
+                        if (month === 2 && now.getDate() > 28) {
                             now.setDate(1);
                         }
                         now.setMonth(month - 1);
@@ -197,7 +192,7 @@ define(['angular'], function (angular) {
                         month = nextMonth.month;
                         renderCalendar(year, month, now.getDate(), table);
                         $scope.header = month + ' / ' + year;
-                        if (month === 2) {
+                        if (month === 2 && now.getDate() > 28) {
                             now.setDate(1);
                         }
                         now.setMonth(month - 1);
@@ -237,15 +232,15 @@ define(['angular'], function (angular) {
 
                     e.stopPropagation();
                 };
-                
+
                 $scope.onCalendarClick = function (e) {
                     var target = e.target;
                     var tagName = target.tagName;
                     if (tagName.toLowerCase() === 'span') {
                         var date = +$(target).html();
                         now.setDate(date);
-                        now.setHours(0);
-                        now.setMinutes(0);
+                        now.setHours($scope.hour);
+                        now.setMinutes($scope.minute);
                         ngModel.$setViewValue($filter('date')(now, dateFormat));
                         if (iAttrs.onDateClick !== 'undefined') {
                             $scope.$parent[iAttrs.onDateClick](now);
@@ -253,9 +248,37 @@ define(['angular'], function (angular) {
                     }
                 };
 
+                $scope.onHourBlur = function () {
+                    var hour = $scope.hour;
+                    if (!dateService.isNumber(hour)) {
+                        $scope.hour = new Date().getHours();
+                    } else {
+                        hour = +hour;
+                        if (hour < 0 || hour > 23) {
+                            $scope.hour = new Date().getHours();
+                        }
+                    }
+                    now.setHours($scope.hour);
+                    ngModel.$setViewValue($filter('date')(now, dateFormat));
+                };
+                $scope.onMinuteBlur = function () {
+                    var minute = $scope.minute;
+                    if (!dateService.isNumber(minute)) {
+                        $scope.minute = new Date().getMinutes();
+                    } else {
+                        minute = +minute;
+                        if (minute < 0 || minute > 59) {
+                            $scope.minute = new Date().getMinutes();
+                        }
+                    }
+                    now.setHours($scope.minute);
+                    ngModel.$setViewValue($filter('date')(now, dateFormat));
+                };
+
                 var initDate = new Date(iAttrs.initValue);
                 if (dateService.isValidDate(initDate)) {
-                    //todo set the calendar to the init date
+                    // todo set the calendar to the init date
+                    // renderCalendar(initDate.getFullYear(), initDate.getMonth() + 1, initDate.getDate(), table);
                 } else {
                     ngModel.$setViewValue($filter('date')(new Date(), dateFormat));
                 }
@@ -276,6 +299,11 @@ define(['angular'], function (angular) {
                 } else {
                     return false;
                 }
+            },
+
+
+            isNumber: function (val) {
+                return !isNaN(parseInt(val, 10)) && isFinite(val);
             },
 
             /**
