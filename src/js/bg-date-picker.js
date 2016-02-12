@@ -166,8 +166,6 @@ define(['angular'], function (angular) {
                 $scope.minute = now.getMinutes();
                 $scope.header = month + ' / ' + year;
 
-                $(container).css('display', 'block');
-
                 $scope.onHeaderClick = function (e) {
                     var target = e.target;
                     if (target.className.indexOf('last-year-icon') !== -1) {
@@ -175,7 +173,6 @@ define(['angular'], function (angular) {
                         renderCalendar(year, month, now.getDate(), table);
                         $scope.header = month + ' / ' + year;
                         now.setFullYear(year);
-                        // ngModel.$setViewValue($filter('date')(now, dateFormat));
                     } else if (target.className.indexOf('last-month-icon') !== -1) {
                         var lastMonth = dateService.getLastMonth(year, month);
                         year = lastMonth.year;
@@ -301,7 +298,11 @@ define(['angular'], function (angular) {
                 }
             },
 
-
+            /**
+             * if obj is a number
+             * @param  {Object}  val
+             * @return {Boolean}
+             */
             isNumber: function (val) {
                 return !isNaN(parseInt(val, 10)) && isFinite(val);
             },

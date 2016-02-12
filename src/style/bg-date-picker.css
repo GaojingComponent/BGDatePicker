@@ -6,7 +6,7 @@
     width: 187px;
     padding: 5px;
     background-color: #f4f4f4;
-    display: none;
+    /*display: none;*/
 }
 .date-picker-calendar-header {
     width: 100%;
