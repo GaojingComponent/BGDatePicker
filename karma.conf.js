@@ -19,7 +19,7 @@ module.exports = function(config) {
         {pattern: 'node_modules/jquery/dist/jquery.min.js', included: false},
         {pattern: 'node_modules/angular/angular.min.js', included: false},
         {pattern: 'node_modules/angular-mocks/angular-mocks.js', included: false},
-        {pattern: 'src/js/bg-date-picker.js', included: false},
+        {pattern: 'src/js/*.js', included: false},
         {pattern: 'test/date-picker.spec.js', included: false}
     ],
 
@@ -32,27 +32,28 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-        'src/js/bg-date-picker.js': 'coverage'
+        'src/js/*.js': 'babel'
+        // 'src/js/bg-date-picker.js': 'coverage'
     },
 
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress', 'coverage', 'verbose'],
+    reporters: ['progress'],//, 'coverage', 'verbose'],
 
-    coverageReporter:{
-        reporters: [{
-            type:'text-summary'
-        }, {
-            type: 'html',
-            dir: 'test/coverage'
-        }, {
-            type: 'cobertura',
-            subdir: '.',
-            dir: 'test/coverage'
-        }]
-    },
+    // coverageReporter:{
+    //     reporters: [{
+    //         type:'text-summary'
+    //     }, {
+    //         type: 'html',
+    //         dir: 'test/coverage'
+    //     }, {
+    //         type: 'cobertura',
+    //         subdir: '.',
+    //         dir: 'test/coverage'
+    //     }]
+    // },
 
     // web server port
     port: 9876,
@@ -78,6 +79,7 @@ module.exports = function(config) {
         'karma-jasmine',
         'karma-coverage',
         'karma-verbose-reporter',
+        'karma-babel-preprocessor',
         'karma-phantomjs-launcher',
         'karma-chrome-launcher',
         'karma-requirejs'
