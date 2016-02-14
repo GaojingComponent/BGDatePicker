@@ -1,8 +1,7 @@
-define(['angular', 'angularMock', 'jquery', 'bgDatePicker'], function (angular, mock, $) {
     describe('service:dateService', function () {
         var dateService;
         beforeEach(function () {
-            module('bg.datePicker');
+            module('bg.datePicker.service');
             inject(function (_DateService_) {
                 dateService = _DateService_;
             });
@@ -113,7 +112,7 @@ define(['angular', 'angularMock', 'jquery', 'bgDatePicker'], function (angular, 
             rootScope.$digest();
             expect(datePicker.val()).toEqual(rootScope.now);
         });
-        
+
         it('should get the correct date on the click of the date', function () {});
 
     });
@@ -259,4 +258,3 @@ define(['angular', 'angularMock', 'jquery', 'bgDatePicker'], function (angular, 
         });
 
     });
-});
