@@ -1,14 +1,5 @@
-// import angular from 'angular';
-// import 'angular-mocks';
-import '../src/js/bg-date-service';
-describe('service:dateService', function () {
-    var dateService;
-    beforeEach(function () {
-        angular.mock.module('bg.datePicker.service');
-        inject(function (_DateService_) {
-            dateService = _DateService_;
-        });
-    });
+import dateService from  '../src/js/bg-date-service';
+describe('service:service', function () {
     // test date service
     it('2016 should be a leap year', function () {
         expect(dateService.isLeap(2016)).toEqual(true);

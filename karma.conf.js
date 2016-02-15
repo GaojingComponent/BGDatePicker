@@ -46,15 +46,15 @@ module.exports = function(config) {
 
         webpack: {
             module: {
+                preLoaders: [{
+                    test: /\.js$/,
+                    exclude: [/node_modules|test/],
+                    loader: 'isparta-instrumenter'
+                }],
                 loaders: [{
                   test: /\.js$/,
                   exclude: /(node_modules)/,
                   loader: 'babel'
-                }],
-                postLoaders: [{
-                  test: /\.js$/,
-                  exclude: /(node_modules|test)/,
-                  loader: 'istanbul-instrumenter'
                 }]
             }
         },

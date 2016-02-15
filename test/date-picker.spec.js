@@ -1,7 +1,4 @@
 import $ from 'jquery';
-// import angular from 'angular';
-// import 'angular-mocks';
-// 
 import '../src/js/bg-date-picker';
 
 describe('directive:BGDatePicker', function () {

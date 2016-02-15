@@ -46,9 +46,13 @@
 
 	'use strict';
 
-	__webpack_require__(1);
+	var _bgDateService = __webpack_require__(1);
+
+	var _bgDateService2 = _interopRequireDefault(_bgDateService);
 
 	__webpack_require__(2);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	/**
 	 * @file date picker component
@@ -56,7 +60,7 @@
 	 */
 
 
-	var datePicker = angular.module('bg.datePicker', ['bg.datePicker.service', 'bg.datePicker.calendar']);
+	var datePicker = angular.module('bg.datePicker', ['bg.datePicker.calendar']);
 	var $ = angular.element;
 	datePicker.directive('bgDatePicker', ['$compile', function ($compile) {
 	    // Runs during compile
@@ -99,6 +103,8 @@
 	    };
 	}]);
 
+	datePicker.service('DateService', [_bgDateService2.default]);
+
 /***/ },
 /* 1 */
 /***/ function(module, exports) {
@@ -108,8 +114,8 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	var bgDateService = angular.module('bg.datePicker.service', []);
-	bgDateService.service('DateService', [function () {
+
+	exports.default = function () {
 	    return {
 	        /**
 	         * if the given year is leap year
@@ -250,15 +256,21 @@
 	        }
 
 	    };
-	}]);
+	};
 
-	exports.default = bgDateService;
+	; // var bgDateService = angular.module('bg.datePicker.service', []);
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+
+	var _bgDateService = __webpack_require__(1);
+
+	var _bgDateService2 = _interopRequireDefault(_bgDateService);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var bgDateCalendar = angular.module('bg.datePicker.calendar', []);
 	var $ = angular.element;
@@ -493,6 +505,7 @@
 	        }
 	    };
 	}]);
+	bgDateCalendar.service('DateService', [_bgDateService2.default]);
 
 /***/ }
 /******/ ]);

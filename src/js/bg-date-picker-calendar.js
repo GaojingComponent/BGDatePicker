@@ -1,4 +1,5 @@
-var bgDateCalendar = angular.module('bg.datePicker.calendar', ['bg.datePicker.service']);
+import dateService from './bg-date-service';
+var bgDateCalendar = angular.module('bg.datePicker.calendar', []);
 var $ = angular.element;
 bgDateCalendar.directive('bgDatePickerCalendar', ['$filter', '$parse', 'DateService', function ($filter, $parse, dateService) {
     /**
@@ -230,4 +231,7 @@ bgDateCalendar.directive('bgDatePickerCalendar', ['$filter', '$parse', 'DateServ
             }
         }
     };
+}]);
+bgDateCalendar.service('DateService', [function () {
+    return dateService;
 }]);

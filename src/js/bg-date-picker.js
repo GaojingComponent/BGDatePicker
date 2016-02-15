@@ -2,10 +2,9 @@
  * @file date picker component
  * @author lakb248@gmail.com
  */
-import './bg-date-service';
 import './bg-date-picker-calendar';
 
-var datePicker = angular.module('bg.datePicker', ['bg.datePicker.service', 'bg.datePicker.calendar']);
+var datePicker = angular.module('bg.datePicker', ['bg.datePicker.calendar']);
 var $ = angular.element;
 datePicker.directive('bgDatePicker', ['$compile', function ($compile) {
     // Runs during compile
