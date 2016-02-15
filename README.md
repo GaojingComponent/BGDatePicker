@@ -1,6 +1,6 @@
 # DatePicker
 
-[![codecov.io](https://codecov.io/github/GaojingComponent/BGDatePicker/coverage.svg?branch=master)](https://codecov.io/github/GaojingComponent/BGDatePicker?branch=master)[![Build Status](https://travis-ci.org/GaojingComponent/BGDatePicker.svg?branch=master)](https://travis-ci.org/GaojingComponent/BGDatePicker)
+[![codecov.io](https://codecov.io/github/GaojingComponent/BGDatePicker/coverage.svg?branch=master)](https://codecov.io/github/GaojingComponent/BGDatePicker?branch=master)       [![Build Status](https://travis-ci.org/GaojingComponent/BGDatePicker.svg?branch=master)](https://travis-ci.org/GaojingComponent/BGDatePicker)
 ## Date picker component implemented by AngularJS
 + Usage
 ```html
