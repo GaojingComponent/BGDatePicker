@@ -1,4 +1,4 @@
-var bgDateCalendar = angular.module('bg.datePicker.calendar', []);
+var bgDateCalendar = angular.module('bg.datePicker.calendar', ['bg.datePicker.service']);
 var $ = angular.element;
 bgDateCalendar.directive('bgDatePickerCalendar', ['$filter', '$parse', 'DateService', function ($filter, $parse, dateService) {
     /**

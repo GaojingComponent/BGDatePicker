@@ -13,7 +13,7 @@ module.exports = function(config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'test/date-picker.spec.js'
+            'test/test-main.js'
         ],
 
         // list of files to exclude
@@ -23,14 +23,13 @@ module.exports = function(config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/js/*.js': ['webpack'],
-            'test/*.spec.js': ['webpack']
+            'test/test-main.js': ['webpack']
         },
 
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress'],//, 'coverage', 'verbose'],
+        reporters: ['progress', 'coverage', 'verbose'],
 
         coverageReporter:{
             reporters: [{
@@ -48,11 +47,13 @@ module.exports = function(config) {
         webpack: {
             module: {
                 loaders: [{
-                  test: /\.(js|jsx)$/, exclude: /(bower_components|node_modules)/,
-                  loader: 'babel-loader'
+                  test: /\.js$/,
+                  exclude: /(node_modules)/,
+                  loader: 'babel'
                 }],
                 postLoaders: [{
-                  test: /\.(js|jsx)$/, exclude: /(node_modules|bower_components|test)/,
+                  test: /\.js$/,
+                  exclude: /(node_modules|test)/,
                   loader: 'istanbul-instrumenter'
                 }]
             }
@@ -73,7 +74,7 @@ module.exports = function(config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['Chrome'],
+        browsers: ['PhantomJS'],
 
         plugins: [
             webpack,
@@ -86,6 +87,6 @@ module.exports = function(config) {
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        singleRun: false
+        singleRun: true
     });
 };
